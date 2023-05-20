@@ -70,16 +70,6 @@ button {
     border: none;
     cursor: pointer;
     padding: 0.5em 1em;
-    display: flex;
-    align-items: center;
-}
-
-.add-task-button {
-    justify-content: center;
-}
-
-.add-task-button i {
-    margin-right: 0.3em;
 }
 
 table {
