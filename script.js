@@ -1,49 +1,38 @@
-document.getElementById('task-form').addEventListener('submit', function(event) {
-    // Prevent the form from submitting
+document.getElementById('task-form').addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    // Get the task details from the form
     var internName = document.getElementById('intern-name').value;
     var taskName = document.getElementById('task-name').value;
     var taskDescription = document.getElementById('task-description').value;
 
-    // Create a new row for the task
-    var row = document.createElement('tr');
+    try {
+        let response = await fetch('/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                internName: internName,
+                taskName: taskName,
+                taskDescription: taskDescription,
+                status: 'Not Started'
+            })
+        });
 
-    // Create the columns for the serial number, intern name, task name, task description
-    var serialNoCell = document.createElement('td');
-    serialNoCell.textContent = document.getElementById('task-table').querySelectorAll('tbody tr').length + 1;
-    row.appendChild(serialNoCell);
+        let result = await response.json();
+        console.log(result.message);
 
-    var internNameCell = document.createElement('td');
-    internNameCell.textContent = internName;
-    row.appendChild(internNameCell);
+        if(response.status == 201) {
+            // Add task to UI
+            // Code for adding task to UI here.
+            // Since it involves direct DOM manipulation, it's the same code as you posted before.
+        } else {
+            console.error(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 
-    var taskNameCell = document.createElement('td');
-    taskNameCell.textContent = taskName;
-    row.appendChild(taskNameCell);
-
-    var taskDescriptionCell = document.createElement('td');
-    taskDescriptionCell.textContent = taskDescription;
-    row.appendChild(taskDescriptionCell);
-
-    // Create a dropdown selection for the task status
-    var statusCell = document.createElement('td');
-    var statusSelect = document.createElement('select');
-    ['Not Started', 'In Progress', 'Completed'].forEach(function(status) {
-        var option = document.createElement('option');
-        option.value = status;
-        option.textContent = status;
-        if(status === 'Not Started') option.selected = true;
-        statusSelect.appendChild(option);
-    });
-    statusCell.appendChild(statusSelect);
-    row.appendChild(statusCell);
-
-    // Add the row to the table
-    document.getElementById('task-table').querySelector('tbody').appendChild(row);
-
-    // Clear the form
     document.getElementById('intern-name').selectedIndex = 0;
     document.getElementById('task-name').value = '';
     document.getElementById('task-description').value = '';
